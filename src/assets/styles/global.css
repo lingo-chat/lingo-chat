@@ -1,0 +1,56 @@
+/* global.css */
+
+html,
+body {
+	height: 100%;
+}
+
+#root {
+	height: 100%;
+}
+
+.main-layout {
+	display: flex;
+	height: 100%;
+}
+
+.sidebar {
+	width: 250px;
+	background-color: #f4f4f4;
+	padding: 20px;
+	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.content {
+	flex: 1;
+	padding: 20px;
+}
+
+.sidebar .nav {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.sidebar .nav .navMenu {
+	margin: 10px;
+}
+
+.sidebar .google-login {
+	position: relative;
+	margin: 15px;
+	height: 40px;
+}
+
+.sidebar .google-login .loginButton {
+	height: 100%;
+	width: 100%;
+	font-size: 16px;
+}
+
+.sidebar .google-login .userName {
+	text-align: center;
+}
