@@ -3,6 +3,7 @@ import Nav from './Nav';
 import ChatRoomList from '../Chat/ChatRoomList';
 import GoogleLoginButton from '../Main/GoogleLoginButton';
 import Cookies from 'js-cookie';
+import { initiateSocketConnection } from '../../utils/socket';
 
 const Sidebar: React.FC = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,6 +17,7 @@ const Sidebar: React.FC = () => {
 		if (storedAccessToken && storedUsername) {
 			setIsLoggedIn(true);
 			setUserName(storedUsername);
+			initiateSocketConnection(storedAccessToken, handleLogout);
 		} else {
 			// 쿠키에서 토큰 가져오기
 			const accessToken = Cookies.get('access-token');
@@ -42,6 +44,17 @@ const Sidebar: React.FC = () => {
 	const handleGoogleLoginClick = () => {
 		window.location.href = 'http://localhost:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
 	};
+
+	const handleLogout = () => {
+		localStorage.removeItem('accessToken');
+		localStorage.removeItem('refreshToken');
+		localStorage.removeItem('userName');
+
+		alert('Your session has expired. Please log in again.');
+
+		window.location.href = '/';
+	};
+
 	return (
 		<div className="sidebar">
 			<div className="title">
