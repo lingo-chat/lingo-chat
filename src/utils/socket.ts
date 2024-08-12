@@ -17,3 +17,34 @@ export const initiateSocketConnection = (accessToken: string, handleLogout: () =
 		handleLogout();
 	});
 };
+
+export const sendMessage = (data: { message: string; personaId: string }, callback: (response: any) => void) => {
+	if (socket) {
+		socket.emit('send_message', data, (response: any) => {
+			callback(response);
+		});
+	} else {
+		console.error('Socket is not initialized.');
+	}
+};
+
+export const subscribeToMessages = (cb: (message: string) => void) => {
+	if (!socket) return;
+
+	socket.on('new_message', (msg) => {
+		console.log('New message received:', msg);
+		cb(msg);
+	});
+};
+
+export const getSocket = () => socket;
+
+export const registerChatRoomListener = (onNewChatRoom: (newRoom: any) => void) => {
+	if (!socket) return;
+	socket.on('new_chat_room', onNewChatRoom);
+
+	// 컴포넌트 언마운트 시 웹소켓 리스너 정리
+	// return () => {
+	//     socket.off('new_chat_room', onNewChatRoom);
+	// };
+};
