@@ -4,19 +4,25 @@ import ChatRoomList from '../Chat/ChatRoomList';
 import GoogleLoginButton from '../Main/GoogleLoginButton';
 import Cookies from 'js-cookie';
 import { initiateSocketConnection } from '../../utils/socket';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { login, logout } from '../../store/userSlice';
 
 const Sidebar: React.FC = () => {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [userName, setUserName] = useState('');
+	const dispatch = useDispatch();
+	const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+	const userName = useSelector((state: RootState) => state.user.userName);
+
+	console.log(isLoggedIn, userName);
 
 	useEffect(() => {
 		// 로컬 스토리지에서 토큰 확인
 		const storedAccessToken = localStorage.getItem('accessToken');
 		const storedUsername = localStorage.getItem('userName');
+		console.log(storedAccessToken);
 
 		if (storedAccessToken && storedUsername) {
-			setIsLoggedIn(true);
-			setUserName(storedUsername);
+			dispatch(login({ userName: storedUsername, accessToken: storedAccessToken }));
 			initiateSocketConnection(storedAccessToken, handleLogout);
 		} else {
 			// 쿠키에서 토큰 가져오기
@@ -35,11 +41,10 @@ const Sidebar: React.FC = () => {
 				Cookies.remove('refresh-token');
 				Cookies.remove('user-name');
 
-				setIsLoggedIn(true);
-				setUserName(userName);
+				dispatch(login({ userName, accessToken }));
 			}
 		}
-	}, []);
+	}, [dispatch]);
 
 	const handleGoogleLoginClick = () => {
 		window.location.href = 'http://localhost:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
@@ -50,6 +55,7 @@ const Sidebar: React.FC = () => {
 		localStorage.removeItem('refreshToken');
 		localStorage.removeItem('userName');
 
+		dispatch(logout());
 		alert('Your session has expired. Please log in again.');
 
 		window.location.href = '/';
