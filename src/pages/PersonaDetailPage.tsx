@@ -8,7 +8,7 @@ const PersonaDetailPage: React.FC = () => {
 
 	React.useEffect(() => {
 		const fetchPersona = async () => {
-			const response = await fetch(`http://localhost:3000/persona/${personaId}`);
+			const response = await fetch(`http://34.64.237.17:3000/persona/${personaId}`);
 
 			// 응답이 성공적이지 않은 경우
 			if (!response.ok) {
@@ -22,8 +22,6 @@ const PersonaDetailPage: React.FC = () => {
 		fetchPersona();
 	}, [personaId]);
 
-	console.log('personaID???????', personaId);
-
 	// 이 코드를 나중에라도 고치고 싶다.
 	if (!personaId) {
 		return <div>페르소나 ID가 제공되지 않았습니다.</div>;
@@ -31,38 +29,22 @@ const PersonaDetailPage: React.FC = () => {
 
 	return (
 		<div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-			<div style={styles.container}>
+			<div>
 				{persona ? (
-					<div>
-						<h1>{persona.name}</h1>
-						<img src={persona.image_url} alt={persona.name} style={styles.image} />
-						<p>{persona.description}</p>
+					<div className="detail-wrap">
+						<img src={persona.image_url} alt={persona.name} />
+						<div className="description">
+							<p style={{ margin: '5px', fontWeight: 'bold' }}>{persona.name}</p>
+							<p style={{ margin: '5px', color: 'gray' }}>{persona.description}</p>
+						</div>
 					</div>
 				) : (
 					<p>Loading...</p>
 				)}
 			</div>
-			<MessageInput personaId={personaId} />
+			<MessageInput personaId={personaId} chatRoomId={''} />
 		</div>
 	);
-};
-
-const styles = {
-	warpper: {
-		height: '100%',
-		display: 'flex',
-		justifyContent: 'space-between',
-	},
-	container: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: '10px',
-	},
-	image: {
-		width: '300px',
-		height: 'auto',
-	},
 };
 
 export default PersonaDetailPage;

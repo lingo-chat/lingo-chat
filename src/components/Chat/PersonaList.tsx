@@ -16,7 +16,7 @@ const PersonaList: React.FC<PersonaListProps> = ({ onSelect }) => {
 
 	useEffect(() => {
 		const fetchPersonas = async () => {
-			const response = await fetch('http://localhost:3000/persona');
+			const response = await fetch('http://34.64.237.17:3000/persona');
 
 			// 응답이 성공적이지 않은 경우
 			if (!response.ok) {
@@ -31,22 +31,12 @@ const PersonaList: React.FC<PersonaListProps> = ({ onSelect }) => {
 	}, []);
 
 	return (
-		<div>
+		<div className="personalist-wrap">
 			{personas.map((persona) => (
-				<div
-					key={persona.id}
-					onClick={() => onSelect(persona.id)}
-					style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}
-				>
-					<h2>{persona.name}</h2>
-					<div style={{ display: 'flex' }}>
-						<img
-							src={persona.image_url}
-							alt={persona.image_url}
-							style={{ width: '100px', height: '100px' }}
-						/>
-						<p style={{ padding: '0 15px' }}>{persona.description}</p>
-					</div>
+				<div key={persona.id} onClick={() => onSelect(persona.id)} className="persona-id">
+					<img src={persona.image_url} alt={persona.image_url} />
+					<p style={{ fontWeight: 'bold', padding: '5px', margin: 0 }}>{persona.name}</p>
+					<p style={{ color: 'gray', padding: '5px', margin: 0, fontSize: '13px' }}>{persona.description}</p>
 				</div>
 			))}
 		</div>

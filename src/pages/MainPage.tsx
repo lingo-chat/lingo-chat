@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PersonaList from '../components/Chat/PersonaList';
 
 const MainPage: React.FC = () => {
-	const [userInfo, setUserInfo] = useState<any>(null);
 	const navigate = useNavigate();
 
 	const handleSelectPersona = async (personaId: number) => {
@@ -11,8 +10,11 @@ const MainPage: React.FC = () => {
 	};
 
 	return (
-		<div>
-			<h1>페르소나 캐릭터 목록</h1>
+		<div className="main-wrap">
+			<div className="text-wrap">
+				<p style={{ fontSize: '20px', fontWeight: 'bold' }}>캐릭터 챗</p>
+				<p style={{ margin: '0' }}>다양한 AI 친구들과 롤플레잉을 즐겨보세요</p>
+			</div>
 			<PersonaList onSelect={handleSelectPersona} />
 		</div>
 	);
