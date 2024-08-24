@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { sendMessage } from '../../utils/socket';
-import { useNavigate, useParams } from 'react-router';
+import { sendFirstMessage, sendChatRoomMessages } from '../../utils/socket';
+import { useNavigate } from 'react-router';
 
 interface MessageInputProps {
 	personaId: string;
+	chatRoomId: string;
+	addMessage?: (message: { text: string; fromAI: boolean }) => void; // 선택적 prop
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ personaId }) => {
+const MessageInput: React.FC<MessageInputProps> = ({ personaId, chatRoomId, addMessage }) => {
 	const [message, setMessage] = useState<string>('');
 	const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 	const navigate = useNavigate();
@@ -17,7 +19,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ personaId }) => {
 		setMessage(event.target.value);
 	};
 
-	const handleSendClick = () => {
+	const handleSendClick = async () => {
 		if (!isLoggedIn) {
 			alert('로그인 후 이용해주세요!');
 			return;
@@ -27,18 +29,29 @@ const MessageInput: React.FC<MessageInputProps> = ({ personaId }) => {
 			return;
 		}
 
-		sendMessage({ message, personaId }, (response: any) => {
-			console.log(message, personaId);
-			console.log('Message sent:', response);
-
-			console.log(response.result);
-
-			if (response && response.result.chatRoomId) {
-				navigate(`/chats/${personaId}/room/${response.result.chatRoomId}`);
+		if (chatRoomId) {
+			// 채팅창
+			if (addMessage) {
+				addMessage({ text: message, fromAI: false });
 			}
 
+			sendChatRoomMessages({ chatRoomId, message }, (response: any) => {});
+
 			setMessage('');
-		});
+		} else {
+			// 페르소나창
+			sendFirstMessage({ message, personaId }, (response: any) => {
+				if (response && response.result.chatRoomId) {
+					navigate(`/chats/${personaId}/room/${response.result.chatRoomId}`, {
+						state: {
+							initialMessage: message,
+						},
+					});
+				}
+
+				setMessage('');
+			});
+		}
 	};
 
 	return (
@@ -62,7 +75,7 @@ const styles = {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
-		padding: '10px',
+		padding: '10px 60px 10px 60px',
 	},
 	input: {
 		width: '80%',
@@ -77,7 +90,7 @@ const styles = {
 		fontSize: '16px',
 		borderRadius: '4px',
 		border: 'none',
-		backgroundColor: '#007bff',
+		backgroundColor: '#1b9c4e',
 		color: 'white',
 		cursor: 'pointer',
 	},

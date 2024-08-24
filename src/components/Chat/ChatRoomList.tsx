@@ -21,16 +21,20 @@ const ChatRoomList: React.FC = () => {
 
 			fetchChatRoomsData();
 
-			// const cleanupListener = registerChatRoomListener((newRoom) => {
-			//     setChatRooms((prevRooms) => [...prevRooms, newRoom]);
-			// });
+			const handleSocketConnected = () => {
+				registerChatRoomListener((newChatRoom) => {
+					const { created_at, id, persona, title, updated_at } = newChatRoom;
+					setChatRooms((prevRooms) => [...prevRooms, { created_at, id, persona, title, updated_at }]);
+				});
+			};
+
+			// 소켓 연결이 완료되었을 때 발생하는 이벤트 감지
+			document.addEventListener('socketConnected', handleSocketConnected);
 		}
 	}, [isLoggedIn]);
 
-	// chatRooms.map((v) => console.log(v.persona.id));
-
 	const fetchChatRooms = async () => {
-		const response = await fetch(`http://localhost:3000/chats/chat-rooms`, {
+		const response = await fetch(`http://34.64.237.17:3000/chats/chat-rooms`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -39,7 +43,6 @@ const ChatRoomList: React.FC = () => {
 		});
 
 		const data = await response.json();
-		// console.log(data);
 
 		if (data.lenght === 0) return [];
 
@@ -48,7 +51,6 @@ const ChatRoomList: React.FC = () => {
 
 	return (
 		<div className="chatroom-wrap">
-			<h3>Chat Rooms</h3>
 			<ul>
 				{chatRooms.map((room) => (
 					<li key={room.id}>

@@ -15,34 +15,48 @@ body {
 }
 
 .sidebar {
-	width: 250px;
+	min-width: 250px;
 	background-color: #f4f4f4;
 	padding: 20px;
 	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 }
 
 .content {
-	flex: 1;
 	padding: 20px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .sidebar .nav {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	margin-top: 20px;
+}
+
+.sidebar .nav a {
+	text-decoration: none;
+	color: black;
 }
 
 .sidebar .nav .navMenu {
-	margin: 10px;
+	margin: 10px 10px 10px 0;
 }
 
 .sidebar .google-login {
 	position: relative;
-	margin: 15px;
 	height: 40px;
+}
+
+.sidebar .google-login .userWrap {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	width: 100%;
 }
 
 .sidebar .google-login .loginButton {
@@ -53,4 +67,120 @@ body {
 
 .sidebar .google-login .userName {
 	text-align: center;
+	margin: 10px 10px 10px 0;
+}
+
+.sidebar .title p {
+	font-size: 22px;
+	font-weight: bold;
+	margin: 5px 5px 5px 10px;
+	color: #1b9c4e;
+}
+
+.main-wrap {
+	max-width: 754px;
+}
+
+.main-wrap .text-wrap {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.main-wrap .text-wrap p {
+	text-align: center;
+}
+
+.personalist-wrap {
+	display: flex;
+	justify-content: space-around;
+	padding-top: 45px;
+	width: 400px;
+}
+
+.personalist-wrap .persona-id {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 154px;
+	cursor: pointer;
+}
+
+.personalist-wrap .persona-id img {
+	border-radius: 10px;
+	width: 100%;
+	height: 154px;
+	display: block;
+}
+
+.personalist-wrap .persona-id img:hover {
+	filter: brightness(70%);
+}
+
+.chatroom-wrap {
+	height: 80%;
+	overflow: auto;
+	-ms-overflow-style: none; /*IE, Edge*/
+	scrollbar-width: none; /*Firefox*/
+	::-webkit-scrollbar {
+		display: none; /*Chrome, Safari, Opera*/
+		width: 0px;
+	}
+}
+
+.chatroom-wrap ul {
+	list-style: none;
+	padding: 0;
+}
+
+.chatroom-wrap li {
+	padding: 10px;
+}
+
+.chatroom-wrap li:hover {
+	background-color: rgb(224, 224, 224);
+	border-radius: 10px;
+}
+
+.chatroom-wrap a {
+	text-decoration: none;
+	color: black;
+}
+
+@media screen and (min-width: 1025px) {
+	.detail-wrap {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding-left: 40px;
+		padding-right: 40px;
+	}
+}
+
+.detail-wrap img {
+	border-radius: 10px;
+	width: 154px;
+	height: 154px;
+}
+
+.detail-wrap .description {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 12px;
+}
+
+.chatlog-wrap {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 100%;
+	height: 100%;
+}
+
+.chatlog-wrap .chatlog {
+	padding-left: 40px;
+	padding-right: 40px;
+	height: 90%;
+	overflow-y: auto;
 }

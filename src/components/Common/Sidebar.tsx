@@ -7,23 +7,21 @@ import { initiateSocketConnection } from '../../utils/socket';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { login, logout } from '../../store/userSlice';
+import { CiUser } from 'react-icons/ci';
 
 const Sidebar: React.FC = () => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 	const userName = useSelector((state: RootState) => state.user.userName);
-
-	console.log(isLoggedIn, userName);
+	const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
 	useEffect(() => {
 		// 로컬 스토리지에서 토큰 확인
 		const storedAccessToken = localStorage.getItem('accessToken');
 		const storedUsername = localStorage.getItem('userName');
-		console.log(storedAccessToken);
 
 		if (storedAccessToken && storedUsername) {
 			dispatch(login({ userName: storedUsername, accessToken: storedAccessToken }));
-			initiateSocketConnection(storedAccessToken, handleLogout);
 		} else {
 			// 쿠키에서 토큰 가져오기
 			const accessToken = Cookies.get('access-token');
@@ -46,7 +44,14 @@ const Sidebar: React.FC = () => {
 		}
 	}, [dispatch]);
 
+	useEffect(() => {
+		if (isLoggedIn && accessToken) {
+			initiateSocketConnection(accessToken, handleLogout);
+		}
+	}, [isLoggedIn, accessToken]);
+
 	const handleGoogleLoginClick = () => {
+		// 배포 서버로 변경 예정
 		window.location.href = 'http://localhost:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
 	};
 
@@ -64,13 +69,16 @@ const Sidebar: React.FC = () => {
 	return (
 		<div className="sidebar">
 			<div className="title">
-				<p>LingoChat</p>
+				<p>LINGO-CHAT</p>
 			</div>
 			<Nav />
 			<ChatRoomList />
 			<div className="google-login">
 				{isLoggedIn ? (
-					<p className="userName">welcome {userName}!</p>
+					<div className="userWrap">
+						<CiUser style={{ margin: '10px' }} />
+						<p className="userName"> {userName} </p>
+					</div>
 				) : (
 					<GoogleLoginButton onLoginClick={handleGoogleLoginClick} />
 				)}
