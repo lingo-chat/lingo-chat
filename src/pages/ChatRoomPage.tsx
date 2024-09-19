@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { subscribeToChatRoomMessages } from '../utils/socket';
 import MessageInput from '../components/Chat/MessageInput';
+import useFetchChatLogs from '../components/Chat/useFetchChatLogs';
 
 const ChatRoomPage: React.FC = () => {
 	const location = useLocation();
@@ -17,41 +18,61 @@ const ChatRoomPage: React.FC = () => {
 	const partialMessageRef = useRef<string>('');
 	const [displayedMessage, setDisplayedMessage] = useState<string>('');
 
+	const { logs, isLoading } = useFetchChatLogs(chatRoomId || '');
+
 	const addMessage = (message: { text: string; fromAI: boolean }) => {
-		setMessages((prevMessages) => [...prevMessages, message]);
+		setMessages((prevMessages) => {
+			const updatedMessages = [...prevMessages, message];
+			localStorage.setItem(`chat_logs_${chatRoomId}`, JSON.stringify(updatedMessages));
+
+			return updatedMessages;
+		});
 	};
 
 	React.useEffect(() => {
-		setChatRooms({ chatRoomId: chatRoomId });
-		if (chatRoom?.chatRoomId) {
+		if (!isLoading && logs.length >= 0) {
+			setMessages((prevMessages) => [...prevMessages, ...logs]);
+		}
+	}, [logs]);
+
+	// 채팅방 상태 업데이트
+	React.useEffect(() => {
+		if (!chatRoom || chatRoom.chatRoomId !== chatRoomId) {
+			setChatRooms({ chatRoomId: chatRoomId });
 			setMessages([]);
 		}
-		if (initialMessage) {
-			addMessage({ text: initialMessage, fromAI: false }); // `fromAI`는 초기 메시지이므로 `false`로 설정
-		}
-	}, [initialMessage]);
 
-	React.useEffect(() => {
+		if (initialMessage && !messages.some((msg) => msg.text === initialMessage)) {
+			setMessages((prevMessages) => [...prevMessages, { text: initialMessage, fromAI: false }]);
+		}
+
 		if (isLoggedIn && chatRoomId) {
 			const handleNewMessage = (data: { message: string; isFinal: boolean }) => {
-				// 메세지 누적
 				partialMessageRef.current += data.message;
 
-				// 실시간으로 화면에 표시
-				setDisplayedMessage(partialMessageRef.current);
-
-				if (data.isFinal) {
-					addMessage({ text: partialMessageRef.current + data.message, fromAI: true });
-					setDisplayedMessage('');
-					partialMessageRef.current = '';
+				// 화면에 표시될 메시지가 변경된 경우에만 업데이트
+				if (partialMessageRef.current !== displayedMessage) {
+					setDisplayedMessage(partialMessageRef.current);
 				}
-				//message.chatRoomId === chatRoomId 비교 예정
-			};
-			subscribeToChatRoomMessages(chatRoomId, handleNewMessage);
-		}
-	}, [isLoggedIn, chatRoomId]);
 
-	console.log(messages);
+				// 메시지가 완료된 경우
+				if (data.isFinal) {
+					addMessage({ text: partialMessageRef.current, fromAI: true });
+					setDisplayedMessage(''); // 화면에 표시된 메시지 초기화
+					partialMessageRef.current = ''; // 메시지 버퍼 초기화
+				}
+			};
+
+			// 채팅방 메시지 구독
+			const unsubscribe = subscribeToChatRoomMessages(chatRoomId, handleNewMessage);
+
+			return () => {
+				if (unsubscribe) unsubscribe();
+				setMessages([]);
+				setDisplayedMessage('');
+			};
+		}
+	}, [initialMessage, chatRoomId, isLoggedIn]);
 
 	if (!personaId || !chatRoomId) {
 		return <div>페르소나 ID가 제공되지 않았습니다.</div>;
@@ -59,7 +80,7 @@ const ChatRoomPage: React.FC = () => {
 
 	return (
 		<div className="chatlog-wrap">
-			<div>
+			<div className="messagesContainer" style={{ overflowY: 'auto' }}>
 				{messages.map((msg, index) => (
 					<div key={index} style={msg.fromAI ? styles.messageFromAIWrap : styles.messageFromUserWrap}>
 						<div style={msg.fromAI ? styles.messageFromAI : styles.messageFromUser}>{msg.text}</div>
@@ -80,7 +101,6 @@ const styles = {
 		height: '100%',
 	},
 	messagesContainer: {
-		flex: 1,
 		overflowY: 'auto',
 		padding: '10px',
 	},
