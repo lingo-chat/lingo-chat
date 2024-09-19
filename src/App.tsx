@@ -13,8 +13,8 @@ const App: React.FC = () => {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<MainPage />} />
 					<Route path="developer-info" element={<DeveloperInfoPage />} />
-					<Route path="chats/:personaId" element={<PersonaDetailPage />} />
-					<Route path="chats/:personaId/room/:chatRoomId" element={<ChatRoomPage />} />
+					<Route path="chat/:personaId" element={<PersonaDetailPage />} />
+					<Route path="chat/:personaId/room/:chatRoomId" element={<ChatRoomPage />} />
 				</Route>
 			</Routes>
 		</Router>

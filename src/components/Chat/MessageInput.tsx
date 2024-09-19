@@ -36,19 +36,18 @@ const MessageInput: React.FC<MessageInputProps> = ({ personaId, chatRoomId, addM
 			}
 
 			sendChatRoomMessages({ chatRoomId, message }, (response: any) => {});
-
 			setMessage('');
 		} else {
 			// 페르소나창
+
 			sendFirstMessage({ message, personaId }, (response: any) => {
 				if (response && response.result.chatRoomId) {
-					navigate(`/chats/${personaId}/room/${response.result.chatRoomId}`, {
+					navigate(`/chat/${personaId}/room/${response.result.chatRoomId}`, {
 						state: {
 							initialMessage: message,
 						},
 					});
 				}
-
 				setMessage('');
 			});
 		}
