@@ -39,7 +39,7 @@ export const sendChatRoomMessages = (
 	callback: (response: any) => void,
 ) => {
 	if (socket) {
-		socket.emit('chatMessage', data, (response: any) => {
+		socket.emit('chat_message', data, (response: any) => {
 			callback(response);
 		});
 	} else {
@@ -55,9 +55,20 @@ export const subscribeToChatRoomMessages = (
 	if (!socket) return;
 	const event = `new_chat_message_${chatRoomId}`;
 
-	socket.on(event, (data: { message: string; isFinal: boolean }) => {
+	const onMessage = (data: { message: string; isFinal: boolean }) => {
+		console.log('data????', data.message);
 		cb(data);
-	});
+	};
+	socket.on(event, onMessage);
+
+	// 구독 해제 함수
+	const unsubscribe = () => {
+		if (socket) {
+			socket.off(event, onMessage); // 이벤트 리스너 제거
+		}
+	};
+
+	return unsubscribe;
 };
 
 export const registerChatRoomListener = (
