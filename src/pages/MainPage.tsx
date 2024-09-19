@@ -6,7 +6,7 @@ const MainPage: React.FC = () => {
 	const navigate = useNavigate();
 
 	const handleSelectPersona = async (personaId: number) => {
-		navigate(`/chats/${personaId}`);
+		navigate(`/chat/${personaId}`);
 	};
 
 	return (
