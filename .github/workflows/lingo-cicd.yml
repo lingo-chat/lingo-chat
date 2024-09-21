@@ -8,6 +8,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest # 최신 우분투 환경에서 실행
+        env:
+            CI: false # CI 환경 변수를 false로 설정
 
         steps:
             - name: Checkout code
