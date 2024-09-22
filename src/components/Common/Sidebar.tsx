@@ -51,8 +51,7 @@ const Sidebar: React.FC = () => {
 	}, [isLoggedIn, accessToken]);
 
 	const handleGoogleLoginClick = () => {
-		// 배포 서버로 변경 예정
-		window.location.href = 'http://localhost:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
+		window.location.href = 'http://lingochat-ai.io:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
 	};
 
 	const handleLogout = () => {
