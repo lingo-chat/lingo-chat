@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 // Redis에서 조회하기
 const fetchMessagesFromRedis = async (chatRoomId: string) => {
-	const response = await fetch(`http://lingochat-ai.io/api/chats/redis/${chatRoomId}`, {
+	const response = await fetch(`/api/chats/redis/${chatRoomId}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ const fetchMessagesFromRedis = async (chatRoomId: string) => {
 
 // DB에서 조회하기
 const fetchMessagesFromDB = async (chatRoomId: string) => {
-	const response = await fetch(`http://lingochat-ai.io/api/chats/db/${chatRoomId}`, {
+	const response = await fetch(`/api/chats/db/${chatRoomId}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
