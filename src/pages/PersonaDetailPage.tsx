@@ -8,7 +8,7 @@ const PersonaDetailPage: React.FC = () => {
 
 	React.useEffect(() => {
 		const fetchPersona = async () => {
-			const response = await fetch(`http://34.64.237.17:3000/persona/${personaId}`);
+			const response = await fetch(`http://lingochat-ai.io/api/persona/${personaId}`);
 
 			// 응답이 성공적이지 않은 경우
 			if (!response.ok) {
