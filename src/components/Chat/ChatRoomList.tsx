@@ -34,7 +34,7 @@ const ChatRoomList: React.FC = () => {
 	}, [isLoggedIn]);
 
 	const fetchChatRooms = async () => {
-		const response = await fetch(`http://lingochat-ai.io/api/chats/chat-rooms`, {
+		const response = await fetch(`/api/chats/chat-rooms`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
