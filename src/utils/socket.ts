@@ -5,7 +5,7 @@ let socket: Socket | null = null;
 export const initiateSocketConnection = (accessToken: string, handleLogout: () => void) => {
 	if (socket) return;
 
-	socket = io('http://lingochat-ai.io/socket', {
+	socket = io('http://34.64.36.147:3080', {
 		query: { accessToken },
 	});
 	console.log('Connecting socket...');
