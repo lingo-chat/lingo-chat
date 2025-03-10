@@ -2,13 +2,14 @@ import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
 
-export const initiateSocketConnection = (accessToken: string, handleLogout: () => void) => {
+export const initiateSocketConnection = (accessToken: string, handleLogout: (socket?: Socket | null) => void) => {
 	if (socket) return;
 
-	socket = io('http://34.64.36.147:3080', {
+	socket = io('http://lingochat-ai.io/socket/users', {
 		query: { accessToken },
+		transports: ['websocket'],
 	});
-	console.log('Connecting socket...');
+	console.log('Connecting socket...!');
 
 	socket.on('connect', () => {
 		console.log('Socket connected:', socket!.id);
@@ -17,7 +18,7 @@ export const initiateSocketConnection = (accessToken: string, handleLogout: () =
 
 	socket.on('disconnect', () => {
 		console.log('Socket disconnected');
-		handleLogout();
+		handleLogout(socket);
 	});
 };
 

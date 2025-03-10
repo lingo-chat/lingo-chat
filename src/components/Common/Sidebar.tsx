@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { login, logout } from '../../store/userSlice';
 import { CiUser } from 'react-icons/ci';
+import { Socket } from 'socket.io-client';
 
 const Sidebar: React.FC = () => {
 	const dispatch = useDispatch();
@@ -51,15 +52,20 @@ const Sidebar: React.FC = () => {
 	}, [isLoggedIn, accessToken]);
 
 	const handleGoogleLoginClick = () => {
-		window.location.href = 'http://lingochat-ai.io:3000/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
+		window.location.href = '/api/auth/google'; // 서버의 구글 인증 엔드포인트로 리다이렉트
 	};
 
-	const handleLogout = () => {
+	const handleLogout = (socket?: Socket | null) => {
 		localStorage.removeItem('accessToken');
 		localStorage.removeItem('refreshToken');
 		localStorage.removeItem('userName');
 
 		dispatch(logout());
+
+		if (socket) {
+			socket.disconnect();
+		}
+
 		alert('Your session has expired. Please log in again.');
 
 		window.location.href = '/';
