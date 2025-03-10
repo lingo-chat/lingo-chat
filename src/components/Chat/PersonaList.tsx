@@ -16,7 +16,6 @@ const PersonaList: React.FC<PersonaListProps> = ({ onSelect }) => {
 
 	useEffect(() => {
 		const fetchPersonas = async () => {
-			// const response = await fetch('http://34.64.237.17:3000/persona');
 			const response = await fetch('/api/persona');
 
 			// 응답이 성공적이지 않은 경우
