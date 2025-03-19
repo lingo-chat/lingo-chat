@@ -1,0 +1,54 @@
+name: Deploy lingo front-end
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest # 최신 우분투 환경에서 실행
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Extract Tag Name
+              id: tag
+              run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+            - name: Build and Push Docker image for amd64 architecture
+              run: docker buildx build --platform linux/amd64 --file Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lingo-chat.amd64:${{ env.TAG }} --push .
+
+            - name: Install yq
+              run: |
+                  curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
+                  chmod +x /usr/local/bin/yq
+
+            - name: Checkout Helm Repository
+              uses: actions/checkout@v2
+              with:
+                  repository: haeseung123/lingo-chat-helm
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  path: helm-repo
+
+            - name: Update Helm values.yaml with new image tag
+              run: |
+                  yq eval '.nginx.image.tag = "${TAG}"' -i helm-repo/values.yaml
+
+            - name: Commit and Push updated values.yaml
+              run: |
+                  git -C helm-repo config user.email "showui96@gmail.com"
+                  git -C helm-repo config user.name "haeseung123"
+                  git -C helm-repo add values.yaml
+                  git -C helm-repo commit -m "Update nginx image tag to ${TAG}"
+                  git -C helm-repo push
