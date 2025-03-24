@@ -38,7 +38,7 @@ jobs:
               uses: actions/checkout@v2
               with:
                   repository: haeseung123/lingo-chat-helm
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ secrets.GIT_TOKEN }}
                   path: helm-repo
 
             - name: Update Helm values.yaml with new image tag
