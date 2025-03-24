@@ -43,7 +43,8 @@ jobs:
 
             - name: Update Helm values.yaml with new image tag
               run: |
-                  yq eval '.nginx.image.tag = "${TAG}"' -i helm-repo/values.yaml
+                  export TAG=${TAG}
+                  yq eval '.nginx.image.tag = env(TAG)' -i helm-repo/values.yaml
 
             - name: Commit and Push updated values.yaml
               run: |
